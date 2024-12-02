@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -38,20 +37,30 @@ func main() {
 	sort.Ints(listOne)
 	sort.Ints(listTwo)
 
-	var totalDist int = 0
-	defer fmt.Println(totalDist)
+	//Part One
+	// var totalDist int = 0
 
-	for i, v := range listOne {
-		// fmt.Println(v)
-		// fmt.Println(listTwo[i])
-		// fmt.Println(int(math.Abs(float64(v - listTwo[i]))))
+	//Part Two
+	var simScore int = 0
 
-		dist := int(math.Abs(float64(v - listTwo[i])))
-		// fmt.Println(dist)
-		totalDist += dist
-		fmt.Println(totalDist)
+	for _, v := range listOne {
+		//Part One
+		// dist := int(math.Abs(float64(v - listTwo[i])))
+		// totalDist += dist
 
+		//Part Two
+		count := 0
+
+		for _, number := range listTwo {
+			if v == number {
+				count++
+			}
+		}
+
+		simScore += (count * v)
 	}
+
+	fmt.Println(simScore)
 
 	if err := scanner.Err(); err != nil {
 		fmt.Println(err)
