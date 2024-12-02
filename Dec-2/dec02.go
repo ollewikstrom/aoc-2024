@@ -26,36 +26,8 @@ func main() {
 		}
 		fmt.Println(line)
 		vals := strings.Split(line, " ")
-		var increasing bool = true
-		for i, v := range vals {
-			fmt.Println("vals len ", len(vals))
-			if i+1 == len(vals) {
-				fmt.Println("Line SAFE ", line)
-				safeRoutesCount++
-				fmt.Println("Safe Routes Count is now ", safeRoutesCount)
-				break
-			}
-			curr, _ := strconv.Atoi(v)
-			next, _ := strconv.Atoi(vals[i+1])
-
-			if i == 0 && next < curr {
-				increasing = false
-			}
-			fmt.Println(increasing)
-
-			if increasing && next < curr {
-				fmt.Println("Here when increasing fucks up")
-				break
-			} else if !increasing && curr < next {
-				fmt.Println("Was decreasing, now increasing ", curr, next)
-				break
-			} else if 0 == int(math.Abs(float64(curr-next))) {
-				fmt.Println("Same number twice %n, %n", curr, next)
-				break
-			} else if 3 < int(math.Abs(float64(curr-next))) {
-				fmt.Println("Difference larger than 3 ", curr, next)
-				break
-			}
+		if checkIfSafe(vals, true) {
+			safeRoutesCount++
 		}
 	}
 
@@ -64,4 +36,75 @@ func main() {
 	}
 
 	fmt.Println(safeRoutesCount)
+}
+
+func checkIfSafe(vals []string, firstTime bool) bool {
+	var increasing bool = true
+	for i, v := range vals {
+		fmt.Println("vals len ", len(vals))
+		if i+1 == len(vals) {
+			return true
+		}
+		curr, _ := strconv.Atoi(v)
+		next, _ := strconv.Atoi(vals[i+1])
+
+		if i == 0 && next < curr {
+			increasing = false
+		}
+		fmt.Println(increasing)
+
+		if increasing && next < curr {
+			fmt.Println("Here when increasing fucks up")
+			if firstTime {
+				if checkIfSafeWithRemoved(vals) {
+					return true
+				}
+			}
+			return false
+		} else if !increasing && curr < next {
+			fmt.Println("Was decreasing, now increasing ", curr, next)
+			if firstTime {
+				if checkIfSafeWithRemoved(vals) {
+					return true
+				}
+			}
+			return false
+		} else if 0 == int(math.Abs(float64(curr-next))) {
+			fmt.Println("Same number twice %n, %n", curr, next)
+			if firstTime {
+				if checkIfSafeWithRemoved(vals) {
+					return true
+				}
+			}
+			return false
+		} else if 3 < int(math.Abs(float64(curr-next))) {
+			fmt.Println("Difference larger than 3 ", curr, next)
+			if firstTime {
+				if checkIfSafeWithRemoved(vals) {
+					return true
+				}
+			}
+			return false
+		}
+	}
+	return true
+}
+
+func checkIfSafeWithRemoved(slice []string) bool {
+	fmt.Println(slice)
+	for i := 0; i < len(slice); i++ {
+		// Create a trimmed version of the slice
+		trimmed := remove(slice, i)
+		fmt.Printf("Removed index %d (%s): %v\n", i, slice[i], trimmed)
+
+		// Check the trimmed slice recursively
+		if checkIfSafe(trimmed, false) {
+			return true
+		}
+	}
+	return false
+}
+
+func remove(slice []string, s int) []string {
+	return append(append([]string{}, slice[:s]...), slice[s+1:]...)
 }
